@@ -1,6 +1,6 @@
 # ==========================================
-#   🚀 WEBTOP + NGROK HTTP (PAID)
-#   ✅ REMOTE QUA BROWSER 100%
+#   🚀 WEBTOP + NGROK HTTP (BROWSER)
+#   ✅ FIXED PID 1 + FIX FLAG
 # ==========================================
 FROM linuxserver/webtop:latest
 
@@ -20,20 +20,23 @@ ENV TZ=Asia/Ho_Chi_Minh
 EXPOSE 3000
 EXPOSE 8080
 
-# s6 service for ngrok
+# ----------------------------
+# s6 service: ngrok
+# ----------------------------
 RUN mkdir -p /etc/services.d/ngrok
-
 RUN printf '#!/usr/bin/execlineb -P\n\
 with-contenv\n\
 ngrok config add-authtoken ${NGROK_AUTHTOKEN}\n\
-ngrok http 3000 --region ap\n' \
+ngrok http 3000\n' \
 > /etc/services.d/ngrok/run && chmod +x /etc/services.d/ngrok/run
 
-# Keep-alive service
+# ----------------------------
+# s6 service: keepalive (Railway)
+# ----------------------------
 RUN mkdir -p /etc/services.d/keepalive
 RUN printf '#!/bin/sh\n\
 while true; do echo OK | nc -l -p 8080; done\n' \
 > /etc/services.d/keepalive/run && chmod +x /etc/services.d/keepalive/run
 
-# START (PHẢI là /init)
+# MUST be /init
 CMD ["/init"]
