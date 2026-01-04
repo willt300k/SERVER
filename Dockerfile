@@ -8,10 +8,11 @@ USER root
 # Cài đặt các công cụ cần thiết
 RUN apk update && apk add --no-cache curl wget netcat-openbsd bash tar
 
-# Tải ngrok bằng phương pháp an toàn nhất (có User-Agent để tránh bị chặn)
-RUN curl -A "Mozilla/5.0" -L https://bin.equinox.io/c/bPR9B2h3Y6h/ngrok-v3-stable-linux-amd64.tgz -o /tmp/ngrok.tgz && \
-    tar -xzf /tmp/ngrok.tgz -C /usr/local/bin && \
-    rm /tmp/ngrok.tgz
+# Sử dụng link ngrok chính xác mà bạn đã cung cấp
+RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz && \
+    tar -xzf ngrok-v3-stable-linux-amd64.tgz && \
+    mv ngrok /usr/local/bin/ && \
+    rm ngrok-v3-stable-linux-amd64.tgz
 
 ENV PUID=1000
 ENV PGID=1000
@@ -25,15 +26,15 @@ echo '🖥️  WEBTOP ĐANG KHỞI ĐỘNG...'; \
 /init & sleep 5; \
 \
 echo '🌐 ĐANG KẾT NỐI NGROK...'; \
-# Railway lấy NGROK_AUTHTOKEN từ tab Variables \
+# Lấy token từ tab Variables của Railway \
 ngrok config add-authtoken ${NGROK_AUTHTOKEN}; \
 \
 echo '------------------------------------------'; \
-echo '👇 LINK TRUY CẬP CỦA BẠN:'; \
-# Chạy ngrok và in log trực tiếp \
+echo '👇 ĐANG MỞ TUNNEL (XEM LINK BÊN DƯỚI):'; \
 ngrok http 3000 --log stdout & \
 \
 sleep 10; \
 echo '------------------------------------------'; \
 \
+# Giữ Railway không bị tắt \
 while true; do echo OK | nc -l -p 8080; done"]
