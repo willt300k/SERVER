@@ -5,12 +5,9 @@
 FROM linuxserver/webtop:latest
 USER root
 
-# Cài đặt các công cụ cần thiết
-RUN apk update && apk add --no-cache curl wget netcat-openbsd bash tar
-
-# Tải ngrok từ link ổn định (v3 stable cho Linux AMD64)
-# Nếu link này lỗi, Docker sẽ dừng ngay tại đây để ta biết
-RUN curl -Lo /tmp/ngrok.tgz https://bin.equinox.io/c/bPR9B2h3Y6h/ngrok-v3-stable-linux-amd64.tgz && \
+# Cài đặt công cụ và tải ngrok từ GitHub Release (Ổn định nhất)
+RUN apk update && apk add --no-cache curl wget netcat-openbsd bash tar && \
+    curl -Lo /tmp/ngrok.tgz https://github.com/ngrok/ngrok-go/releases/download/v3.3.5/ngrok-v3-stable-linux-amd64.tgz && \
     tar -xzf /tmp/ngrok.tgz -C /usr/local/bin && \
     rm /tmp/ngrok.tgz
 
@@ -26,15 +23,13 @@ echo '🖥️  WEBTOP ĐANG KHỞI ĐỘNG...'; \
 /init & sleep 5; \
 \
 echo '🌐 ĐANG KẾT NỐI NGROK...'; \
-# Sử dụng biến NGROK_AUTHTOKEN từ Railway Variables \
+# Railway sẽ lấy NGROK_AUTHTOKEN từ Variables \
 ngrok config add-authtoken ${NGROK_AUTHTOKEN}; \
 \
 echo '------------------------------------------'; \
-echo '👇 LINK TRUY CẬP CỦA BẠN SẼ HIỆN Ở DÒNG URL:'; \
-# Chạy ngrok và ép in log ra màn hình \
+echo '👇 LINK TRUY CẬP CỦA BẠN:'; \
 ngrok http 3000 --log stdout & \
 \
-# Đợi 10 giây để đảm bảo tunnel đã mở và in link \
 sleep 10; \
 echo '------------------------------------------'; \
 \
