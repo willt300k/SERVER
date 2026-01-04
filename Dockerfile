@@ -1,6 +1,6 @@
 # ==========================================
 #   🚀 WEBTOP + NGROK HTTP (BROWSER)
-#   ✅ FIX PID 1 + FIX S6
+#   ✅ FIX S6 LOOP + PID 1
 # ==========================================
 FROM linuxserver/webtop:latest
 
@@ -12,6 +12,7 @@ RUN apk update && \
     wget -qO- https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz \
     | tar xz -C /usr/local/bin
 
+# Env
 ENV PUID=1000
 ENV PGID=1000
 ENV TZ=Asia/Ho_Chi_Minh
@@ -20,7 +21,7 @@ EXPOSE 3000
 EXPOSE 8080
 
 # ----------------------------
-# s6 service: ngrok (DÙNG SH)
+# s6 service: ngrok
 # ----------------------------
 RUN mkdir -p /etc/services.d/ngrok
 RUN printf '#!/bin/sh\n\
@@ -34,8 +35,9 @@ exec ngrok http 3000\n' \
 # ----------------------------
 RUN mkdir -p /etc/services.d/keepalive
 RUN printf '#!/bin/sh\n\
-while true; do echo OK | nc -l -p 8080; done\n' \
+exec sh -c \"while true; do echo OK | nc -l -p 8080; done\"\n' \
 > /etc/services.d/keepalive/run && chmod +x /etc/services.d/keepalive/run
 
-# BẮT BUỘC
+# ❗ BẮT BUỘC
 CMD ["/init"]
+
