@@ -22,7 +22,7 @@ echo '🖥️ ĐANG KHỞI ĐỘNG WEBTOP...'; \
 sleep 15; \
 echo '🌐 ĐANG MỞ TUNNEL NGROK...'; \
 # Chạy thẳng tunnel kèm token, không cần ghi file config \
-ngrok http 3000 --authtoken 37YRYAmCBVv3Y1p3yFw8M1BAxXK_3ZanThHVnhFvAzh3ckmfc --log stdout & \
+ngrok http 3000 --authtoken 1zix6Xh9BPBRvIrrY85S2L3djWY_4ZzHtRzfJ2XnbyBJGCWMp --log stdout & \
 \
 echo '✅ VPS ĐÃ SẴN SÀNG. KIỂM TRA LINK Ở DƯỚI:'; \
 while true; do echo OK | nc -l -p 8080; done"]
